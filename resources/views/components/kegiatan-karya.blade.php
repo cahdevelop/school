@@ -24,12 +24,17 @@
 --}}
 @php
     /*
-     * Satu daftar datar, bukan dua. Entri terbaru jadi sorotan, sisanya jadi
-     * grid. Mengurutkan di sini, bukan mengandalkan urutan file, supaya
-     * sumber datanya boleh disusun sesuka hati.
+     * Menampilkan tepat 4 item: 2 video dan 2 foto, diurutkan dari tanggal terbaru.
+     * Item paling baru menjadi sorotan utama, sedangkan 3 lainnya menjadi kartu grid.
      */
-    $daftar = \Illuminate\Support\Collection::make(config('kegiatan'))
+    $semua = \Illuminate\Support\Collection::make(config('kegiatan'))
         ->filter(fn ($item) => is_array($item))
+        ->sortByDesc('tanggal');
+
+    $videos = $semua->where('tipe', 'video')->take(2);
+    $fotos = $semua->where('tipe', 'foto')->take(2);
+
+    $daftar = $videos->concat($fotos)
         ->sortByDesc('tanggal')
         ->values();
 
@@ -93,27 +98,44 @@
 
 @if ($sorotan && filled($sorotan))
     <section aria-labelledby="kegiatan-judul"
-             class="border-t border-slate-200 bg-white"
+             class="relative overflow-hidden border-y border-amber-200/70 bg-gradient-to-b from-amber-50/80 via-orange-50/30 to-amber-50/60"
              style="--reveal-dur: 1s; --reveal-jarak-y: 1rem;">
-        <div class="mx-auto max-w-6xl px-4 py-16 sm:py-20 lg:py-24">
+        {{-- Elemen dekoratif latar belakang agar tampilan lebih hidup dan menarik --}}
+        <div class="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-amber-300/25 blur-3xl" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute top-1/2 -left-28 h-96 w-96 rounded-full bg-orange-300/20 blur-3xl" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -bottom-24 right-1/4 h-80 w-80 rounded-full bg-amber-200/25 blur-3xl" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute inset-0 opacity-35 [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_80%)]"
+             style="background-image: radial-gradient(#d97706 0.75px, transparent 0.75px); background-size: 24px 24px;"
+             aria-hidden="true"></div>
+
+        <div class="relative mx-auto max-w-6xl px-4 py-16 sm:py-20 lg:py-24">
 
             <div data-reveal-group>
 
                 {{-- Header --}}
-                <div data-reveal-item="down" style="--reveal-delay: 0ms" class="max-w-2xl">
-                    <p class="inline-flex items-center gap-2 rounded-full border border-amber-200/80 bg-amber-50/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-700">
-                        Dari Murid Kami
-                    </p>
+                <div data-reveal-item="down" style="--reveal-delay: 0ms" class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div class="max-w-2xl">
+                        <p class="inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-white/90 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-amber-800 shadow-xs backdrop-blur-sm">
+                            <span class="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden="true"></span>
+                            Dari Murid Kami
+                        </p>
 
-                    <h2 id="kegiatan-judul"
-                        class="mt-5 text-balance text-2xl font-bold leading-[1.2] tracking-tight text-slate-900 sm:text-3xl">
-                        Kegiatan &amp; Karya Peserta Didik
-                    </h2>
+                        <h2 id="kegiatan-judul"
+                            class="mt-5 text-balance text-2xl font-bold leading-[1.2] tracking-tight text-slate-900 sm:text-3xl">
+                            Kegiatan &amp; Karya Peserta Didik
+                        </h2>
 
-                    <p class="mt-4 text-pretty text-[0.9375rem] leading-relaxed text-slate-600 sm:text-base">
-                        Praktikum, pameran, dan karya yang dikerjakan sendiri oleh peserta didik,
-                        dari kelas pertama sampai hari mereka melepas ijazah.
-                    </p>
+                        <p class="mt-4 text-pretty text-[0.9375rem] leading-relaxed text-slate-600 sm:text-base">
+                            Praktikum, pameran, dan karya yang dikerjakan sendiri oleh peserta didik,
+                            dari kelas pertama sampai hari mereka melepas ijazah.
+                        </p>
+                    </div>
+
+                    <a href="{{ route('galeri') }}"
+                       class="group relative hidden sm:inline-flex items-center gap-1.5 pb-1 text-sm font-semibold text-slate-700 transition-colors duration-300 hover:text-amber-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-400 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-amber-500 after:transition-transform after:duration-300 hover:after:scale-x-100 motion-reduce:transition-none motion-reduce:after:hidden">
+                        Lihat selengkapnya
+                        <span class="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true">&rarr;</span>
+                    </a>
                 </div>
 
                 {{--
@@ -139,7 +161,7 @@
 
                 <article data-reveal-item="down"
                          style="--reveal-delay: {{ $jedaSorotan }}ms"
-                         class="group relative mt-12 grid overflow-hidden rounded-2xl bg-slate-900 shadow-sm lg:grid-cols-12">
+                         class="group relative mt-12 grid overflow-hidden rounded-2xl bg-slate-900 shadow-xl shadow-slate-950/20 ring-1 ring-slate-800 lg:grid-cols-12">
 
                     <div class="relative lg:col-span-7 lg:min-h-[19rem]">
                         <div class="relative aspect-[16/10] w-full lg:aspect-auto lg:h-full">
@@ -263,7 +285,7 @@
                             <div data-reveal-item="down"
                                  style="--reveal-delay: {{ $jedaSorotan + $jedaKartu + $index * $jedaKartu }}ms"
                                  class="h-full">
-                                <article class="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-900/[0.06] focus-within:-translate-y-1 focus-within:shadow-lg focus-within:shadow-slate-900/[0.06] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:focus-within:translate-y-0">
+                                <article class="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-amber-900/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-amber-300 hover:shadow-xl hover:shadow-amber-950/10 focus-within:-translate-y-1 focus-within:shadow-xl focus-within:shadow-amber-950/10 motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:focus-within:translate-y-0">
 
                                     {{-- Media --}}
                                     <div class="relative aspect-[16/10] overflow-hidden bg-slate-100">
@@ -346,6 +368,17 @@
                         @endforeach
                     </div>
                 @endif
+
+                {{-- Tautan "Lihat Selengkapnya" --}}
+                <div data-reveal-item="down"
+                     style="--reveal-delay: {{ $jedaSorotan + $jedaKartu * 4 }}ms"
+                     class="mt-12 flex justify-center">
+                    <a href="{{ route('galeri') }}"
+                       class="group inline-flex items-center gap-2.5 rounded-xl border border-amber-300/80 bg-white/95 px-6 py-3 text-sm font-semibold tracking-wide text-slate-800 shadow-sm shadow-amber-950/5 backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-amber-400 hover:bg-white hover:text-amber-800 hover:shadow-md hover:shadow-amber-950/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 motion-reduce:transition-none">
+                        <span>Lihat Selengkapnya</span>
+                        <span class="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true">&rarr;</span>
+                    </a>
+                </div>
             </div>
         </div>
     </section>

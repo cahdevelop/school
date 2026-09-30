@@ -84,34 +84,4 @@ return [
         'tautan' => null,
     ],
 
-    [
-        'tipe' => 'video',
-        'kategori' => 'Praktikum',
-        'judul' => 'Praktikum Dapur: Menu Musim',
-        'ringkasan' => 'Dapur praktik menyiapkan hidangan penjurian akhir bagi peserta didik bidang Kuliner.',
-        'gambar' => 'praktikum-kuliner.png',
-        'tanggal' => '2026-09-26',
-        'tautan' => 'https://www.youtube.com/watch?v=CONTOH-PRAKTIKUM-KULINER-2026',
-    ],
-
-    [
-        'tipe' => 'foto',
-        'kategori' => 'Prestasi',
-        'judul' => 'Juara Lomba Poster Urban',
-        'ringkasan' => 'Karya dua peserta didik juara pada lomba poster tingkat kabupaten.',
-        'gambar' => 'juara-lomba-poster.png',
-        'tanggal' => '2026-09-19',
-        'tautan' => null,
-    ],
-
-    [
-        'tipe' => 'video',
-        'kategori' => 'Pameran Karya',
-        'judul' => 'Sidang Laporan Keuangan',
-        'ringkasan' => 'Sidang laporan keuangan sebagai bagian dari pameran karya bidang Akuntansi.',
-        'gambar' => 'sidang-laporan-ak.png',
-        'tanggal' => '2026-09-12',
-        'tautan' => 'https://www.youtube.com/watch?v=CONTOH-SIDANG-AK-2026',
-    ],
-
 ];

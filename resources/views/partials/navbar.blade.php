@@ -1,11 +1,47 @@
 @php
     $menuProgram = [
-        'kuliner' => 'Kuliner',
-        'dkv' => 'DKV',
-        'tkj' => 'TKJ',
-        'ak' => 'AK',
-        'mp' => 'MP',
-        'bd' => 'BD',
+        'kuliner' => [
+            'singkat' => 'Kuliner',
+            'nama' => 'Kuliner',
+            'deskripsi' => 'Seni kuliner, tata boga & pengolahan pangan',
+            'warna' => 'bg-amber-50 text-amber-600 group-hover:bg-amber-500 group-hover:text-white',
+            'ikon' => 'kuliner',
+        ],
+        'dkv' => [
+            'singkat' => 'DKV',
+            'nama' => 'Desain Komunikasi Visual',
+            'deskripsi' => 'Desain grafis, multimedia & promosi visual',
+            'warna' => 'bg-violet-50 text-violet-600 group-hover:bg-violet-500 group-hover:text-white',
+            'ikon' => 'dkv',
+        ],
+        'tkj' => [
+            'singkat' => 'TKJ',
+            'nama' => 'Teknik Komputer & Jaringan',
+            'deskripsi' => 'Infrastruktur server & keamanan jaringan',
+            'warna' => 'bg-sky-50 text-sky-600 group-hover:bg-sky-500 group-hover:text-white',
+            'ikon' => 'tkj',
+        ],
+        'ak' => [
+            'singkat' => 'AK',
+            'nama' => 'Akuntansi',
+            'deskripsi' => 'Pengelolaan laporan & sistem keuangan digital',
+            'warna' => 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white',
+            'ikon' => 'ak',
+        ],
+        'mp' => [
+            'singkat' => 'MP',
+            'nama' => 'Manufaktur & Pemesinan',
+            'deskripsi' => 'Permesinan presisi & teknik manufaktur',
+            'warna' => 'bg-blue-50 text-blue-600 group-hover:bg-blue-500 group-hover:text-white',
+            'ikon' => 'mp',
+        ],
+        'bd' => [
+            'singkat' => 'BD',
+            'nama' => 'Bisnis Digital',
+            'deskripsi' => 'Pemasaran daring, e-commerce & konten bisnis',
+            'warna' => 'bg-rose-50 text-rose-600 group-hover:bg-rose-500 group-hover:text-white',
+            'ikon' => 'bd',
+        ],
     ];
 
     $menuUtama = [
@@ -104,31 +140,117 @@
                @if (request()->routeIs('beranda')) aria-current="page" @endif
                class="rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300">Beranda</a>
 
-            <div class="menu-program relative">
+            <div class="menu-program group/menu relative">
                 <a href="{{ route('program.index') }}"
                    :class="nav({{ $diProgram ? 'true' : 'false' }})"
                    @if ($diProgram) aria-current="page" @endif
-                   class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300">
-                    Program Keahlian
-                    <svg class="h-3.5 w-3.5 opacity-70" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                   class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300">
+                    <span>Program Keahlian</span>
+                    <svg class="h-3.5 w-3.5 opacity-70 transition-transform duration-200 group-hover/menu:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.19l3.71-3.96a.75.75 0 1 1 1.08 1.04l-4.25 4.53a.75.75 0 0 1-1.08 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
                     </svg>
                 </a>
 
-                <div class="menu-program__panel absolute left-0 top-full pt-3">
-                    <div :class="panel()"
-                         class="w-52 overflow-hidden rounded-xl border py-1.5 shadow-lg transition-colors duration-300">
-                        @foreach ($menuProgram as $slug => $label)
-                            <a href="{{ route('program.show', $slug) }}"
-                               @class([
-                                   'flex items-center justify-between px-4 py-2 text-sm transition-colors',
-                                   'text-amber-600' => $programIni === $slug,
-                                   'text-slate-700 hover:bg-slate-50 hover:text-slate-900' => $programIni !== $slug,
-                               ])>
-                                <span>{{ $label }}</span>
-                                <span class="text-[10px] uppercase tracking-wider text-slate-400">{{ $loop->iteration }}</span>
+                <div class="menu-program__panel absolute left-0 top-full pt-2">
+                    <div class="w-[34rem] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-slate-200/90 bg-white/98 p-3 shadow-2xl shadow-slate-900/15 ring-1 ring-slate-900/5 backdrop-blur-md">
+                        <div class="grid grid-cols-2 gap-1.5">
+                            @foreach ($menuProgram as $slug => $item)
+                                <a href="{{ route('program.show', $slug) }}"
+                                   @class([
+                                       'group flex items-start gap-3 rounded-xl p-2.5 transition duration-200',
+                                       'bg-amber-50/90 ring-1 ring-amber-300' => $programIni === $slug,
+                                       'hover:bg-slate-50' => $programIni !== $slug,
+                                   ])>
+                                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl {{ $item['warna'] }} transition-all duration-200 shadow-xs">
+                                        @switch($item['ikon'])
+                                            @case('kuliner')
+                                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                                    <line x1="6" y1="1" x2="6" y2="4"></line>
+                                                    <line x1="10" y1="1" x2="10" y2="4"></line>
+                                                    <line x1="14" y1="1" x2="14" y2="4"></line>
+                                                </svg>
+                                                @break
+
+                                            @case('dkv')
+                                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                                                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                                                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                                                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                                                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path>
+                                                </svg>
+                                                @break
+
+                                            @case('tkj')
+                                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                                                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                                                    <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                                                    <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                                                </svg>
+                                                @break
+
+                                            @case('ak')
+                                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                                                    <line x1="8" y1="6" x2="16" y2="6"></line>
+                                                    <line x1="16" y1="14" x2="16" y2="18"></line>
+                                                    <path d="M16 10h.01"></path>
+                                                    <path d="M12 10h.01"></path>
+                                                    <path d="M8 10h.01"></path>
+                                                    <path d="M12 14h.01"></path>
+                                                    <path d="M8 14h.01"></path>
+                                                    <path d="M12 18h.01"></path>
+                                                    <path d="M8 18h.01"></path>
+                                                </svg>
+                                                @break
+
+                                            @case('mp')
+                                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                                </svg>
+                                                @break
+
+                                            @case('bd')
+                                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                                </svg>
+                                                @break
+                                        @endswitch
+                                    </span>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="truncate text-xs font-bold text-slate-900 transition-colors group-hover:text-amber-700">
+                                                {{ $item['nama'] }}
+                                            </span>
+                                            <span class="rounded bg-slate-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                                                {{ $item['singkat'] }}
+                                            </span>
+                                        </div>
+                                        <p class="mt-0.5 line-clamp-1 text-[11px] leading-relaxed text-slate-500">
+                                            {{ $item['deskripsi'] }}
+                                        </p>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+
+                        <div class="-mx-3 -mb-3 mt-2 flex items-center justify-between rounded-b-2xl border-t border-slate-100 bg-slate-50/80 p-3 px-4">
+                            <div class="flex items-center gap-2 text-xs text-slate-500">
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                                <span>6 Program Keahlian Siap Kerja</span>
+                            </div>
+                            <a href="{{ route('program.index') }}"
+                               class="group/link inline-flex items-center gap-1 text-xs font-semibold text-amber-700 hover:text-amber-800 transition-colors">
+                                <span>Lihat Semua Jurusan</span>
+                                <span class="transition-transform duration-200 group-hover/link:translate-x-0.5" aria-hidden="true">&rarr;</span>
                             </a>
-                        @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
@@ -172,13 +294,19 @@
         </a>
 
         <p class="px-3 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Program Keahlian</p>
-        @foreach ($menuProgram as $slug => $label)
+        @foreach ($menuProgram as $slug => $item)
             <a href="{{ route('program.show', $slug) }}"
                @class([
-                   'block rounded-lg px-3 py-2 text-sm',
-                   'bg-slate-100 font-medium text-slate-900' => $programIni === $slug,
-                   'text-slate-700' => $programIni !== $slug,
-               ])>{{ $label }}</a>
+                   'flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors',
+                   'bg-amber-50 font-semibold text-amber-800' => $programIni === $slug,
+                   'text-slate-700 hover:bg-slate-50' => $programIni !== $slug,
+               ])>
+                <span class="flex items-center gap-2">
+                    <span class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-600">{{ $item['singkat'] }}</span>
+                    <span>{{ $item['nama'] }}</span>
+                </span>
+                <span class="text-xs text-slate-400">&rarr;</span>
+            </a>
         @endforeach
 
         @foreach ($menuUtama as $nama => $label)

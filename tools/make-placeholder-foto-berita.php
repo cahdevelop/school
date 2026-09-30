@@ -34,6 +34,21 @@ $gambar = [
         'tinta' => [0x1B, 0x44, 0x77],
         'glif' => ['KEGIATAN', 'KARYA'],
     ],
+    'lks-cyber-security.png' => [
+        'latar' => [0xDC, 0xF0, 0xE4],
+        'tinta' => [0x15, 0x60, 0x3E],
+        'glif' => ['PRESTASI', 'EMAS LKS'],
+    ],
+    'kunjungan-industri.png' => [
+        'latar' => [0xDB, 0xE8, 0xFA],
+        'tinta' => [0x1E, 0x40, 0xAF],
+        'glif' => ['INDUSTRI', 'KEMITRAAN'],
+    ],
+    'tips-ukk-nasional.png' => [
+        'latar' => [0xF5, 0xEA, 0xFA],
+        'tinta' => [0x70, 0x1A, 0x75],
+        'glif' => ['EDUKASI', 'TIPS UKK'],
+    ],
 ];
 
 $lebar = 1600;
