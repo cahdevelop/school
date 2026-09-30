@@ -1,0 +1,341 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* Alpine belum siap saat HTML pertama dimuat. Tanpa ini, elemen yang
+   disembunyikan dengan x-show akan berkedip terlihat sekilas. */
+[x-cloak] {
+    display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+
+   Navbar melayang di atas hero sebagai saudara, bukan anak, jadi posisinya
+   (absolute lalu fixed) selalu dihitung terhadap viewport.
+
+   Hero di-PIN (position: sticky), bukan sekadar satu blok yang keluar
+   natural. Efek yang diinginkan: foto diam di tempat, konten dari bawah naik
+   menutupinya. Dua konsekuensi yang wajib dijaga:
+
+   1. Hero harus setinggi viewport PERSIS. min-height yang lebih besar dari
+      viewport membuat bagian bawahnya terpotong selama menyangkut di atas.
+      Padding teks diatur lewat media query max-height, bukan min-height.
+
+   2. Fotonya TIDAK boleh bergerak sedikit pun, dan tidak boleh punya
+      transform. Dua alasan:
+        - gerakan sekecil apa pun akan terlihat melawan arah scroll;
+        - `transform` pada sebuah leluhur membuat `position: fixed` dihitung
+          terhadap leluhur itu, bukan terhadap viewport.
+      Yang menutupi hero adalah <main> (z-20, margin atas negatif, latar
+      opaque), bukan hero yang bergeser.
+   -------------------------------------------------------------------------- */
+.hero-kanvas {
+    position: sticky;
+    top: 0;
+    /*
+     * Sengaja sedikit di bawah 100svh. Sisanya diisi <main> yang punya
+     * margin atas negatif, jadi saat halaman baru dibuka ujung atas konten
+     * sudah terlihat menyentuh foto, dan saat scroll naiknya jelas terlihat
+     * menutupi. Kalau 100svh, efek "ditutup" baru terasa belakangan.
+     */
+    height: 90svh;
+    /* Memotong foto hero dan mencegah scroll horizontal. */
+    overflow: hidden;
+}
+
+/* Wadah foto. overflow: hidden memastikan foto tidak meluber keluar hero. */
+.hero-latar {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+/*
+ * Foto hero. Statis sepenuhnya: tidak ada transform, tidak ada will-change.
+ * Karena tidak ada gerakan, tidak perlu layer kompositor khusus.
+ */
+.hero-latar__foto {
+    position: absolute;
+    inset: 0;
+    background-image: var(--hero-gambar);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Tirai gelap agar teks navbar dan hero tetap terbaca di atas foto. */
+.hero-tirai {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgb(2 6 23 / 0.72) 0%, rgb(2 6 23 / 0.34) 38%, rgb(2 6 23 / 0.78) 100%),
+        linear-gradient(90deg, rgb(2 6 23 / 0.62) 0%, rgb(2 6 23 / 0.12) 70%);
+}
+
+.hero-isi {
+    position: relative;
+    display: flex;
+    /*
+     * Rata kiri, tapi tepat di tengah secara vertikal.
+     *
+     * align-items: center hanya bekerja pada sumbu tegak, jadi teks tetap
+     * rata kiri. Padding atas dan bawah sengaja sama besar supaya blok teks
+     * duduk persis di titik tengah foto. Padding atas sekaligus menyingkirkan
+     * navbar transparan yang setinggi 5.5rem.
+     */
+    align-items: center;
+    height: 100%;
+    padding-top: 6.5rem;
+    padding-bottom: 6.5rem;
+}
+
+/* Teks hero: sedikit terangkat lalu memudar saat konten mulai menutup. */
+.hero-teks {
+    will-change: transform, opacity;
+}
+
+/*
+ * Viewport pendek (ponsel landscape, jendela kecil yang diperkecil).
+ * Hero dipin setinggi 100svh, jadi teksnya tidak boleh lebih tinggi dari
+ * layar. Ini pengganti min-height yang lama: min-height akan membuat bagian
+ * bawah hero terpotong selama menyangkut di atas.
+ */
+@media (max-height: 40rem) {
+    .hero-isi {
+        padding-top: 6rem;
+        padding-bottom: 6rem;
+    }
+
+    .hero-isi__judul {
+        font-size: 1.875rem;
+        line-height: 1.15;
+    }
+
+    .hero-isi__ringkas {
+        font-size: 0.875rem;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Dropdown Program Keahlian
+   Dibuka lewat :focus-within supaya bisa dipakai dengan keyboard.
+   -------------------------------------------------------------------------- */
+
+.menu-program > .menu-program__panel {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.5rem);
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease,
+        visibility 0.18s;
+}
+
+.menu-program:hover > .menu-program__panel,
+.menu-program:focus-within > .menu-program__panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   Kartu guru + popup informasi
+   -------------------------------------------------------------------------- */
+
+.kartu-guru__popup {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.5rem);
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s;
+}
+
+.kartu-guru:hover .kartu-guru__popup,
+.kartu-guru:focus-within .kartu-guru__popup {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.kartu-guru__foto {
+    filter: grayscale(1);
+    transition: filter 0.25s ease;
+}
+
+.kartu-guru:hover .kartu-guru__foto,
+.kartu-guru:focus-within .kartu-guru__foto {
+    filter: grayscale(0);
+}
+
+/* Munculnya isi hero sedikit naik saat halaman dibuka. */
+.hero-muncul {
+    animation: hero-muncul 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes hero-muncul {
+    from {
+        opacity: 0;
+        transform: translateY(1.25rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Scroll reveal
+
+   Diatur oleh resources/js/reveal.js.
+
+   PENTING: state "belum muncul" hanya berlaku kalau <html> punya kelas
+   `js-reveal`, dan kelas itu hanya ditambahkan setelah JS memastikan
+   IntersectionObserver tersedia. Tanpa JS, atau dengan reduced motion, aturan
+   ini tidak pernah aktif dan semua konten langsung terlihat. Konten sekolah
+   tidak boleh hilang hanya karena animasi gagal jalan.
+
+   Elemen yang sudah `is-revealed` mengembalikan `will-change` ke auto, supaya
+   layer kompositor tidak tertahan untuk elemen yang sudah diam.
+   -------------------------------------------------------------------------- */
+
+/*
+ * Token gerak reveal. Semua di sini bisa dioverride per-section lewat
+ * inline `style`, jadi satu section bisa punya tempo sendiri tanpa
+ * mengubah section lain.
+ *
+ * Yang menentukan rasa lambatnya adalah rasio antara jarak dan durasi,
+ * bukan durasi saja. Elemen kecil dengan jarak jauh dan durasi panjang
+ * akan terasa lambat; jarak pendek dengan durasi pendek terasa tajam.
+ */
+:root {
+    /* Kurva expo-out: mulai cepat, lalu ekor panjang yang melambat halus.
+       Ekor inilah yang dibaca mata sebagai "halus", bukan durasinya. */
+    --reveal-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Tempo default, untuk elemen besar seperti foto 4:5. */
+    --reveal-dur: 0.72s;
+    --reveal-jarak-x: 1.5rem;
+    --reveal-jarak-y: 1.1rem;
+}
+
+/*
+ * Dua cara memunculkan elemen:
+ *
+ * 1. `[data-reveal]` dipantau sendiri-sendiri. Dipakai di Berita, di mana
+ *    tiap kartu memang boleh muncul kapan saja sesuai posisinya.
+ *
+ * 2. `[data-reveal-group]` dipantau sebagai satu kesatuan, lalu ia menyalakan
+ *    semua `[data-reveal-item]` di dalamnya sekaligus. Dipakai di Sambutan,
+ *    di mana teks harus tampil berurutan sebagai satu rangkaian.
+ *
+ * Kenapa butuh cara kedua? Kalau tiap baris dipantau sendiri, maka baris
+ * yang baru masuk viewport belakangan tetap membawa `--reveal-delay` yang
+ * penuh. Di layar kecil kolom teks lebih tinggi dari layar, jadi paragraf
+ * terakhir bisa arrive 490ms SETELAH discroll ke sana, lalu menunggu jeda
+ * 490ms lagi sebelum bergerak. Hasilnya persis complaint "kurang smooth":
+ * ada jeda ganda. Dengan grup, semua baris mulai dari titik yang sama dan
+ * jeda antarbaris jadi murni furnish, bukan penundaan.
+ */
+.js-reveal [data-reveal],
+.js-reveal [data-reveal-group] [data-reveal-item] {
+    opacity: 0;
+    transition:
+        opacity var(--reveal-dur) var(--reveal-ease),
+        transform var(--reveal-dur) var(--reveal-ease);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+}
+
+/*
+ * Jarak tempuh sengaja pendek, bukan 2.5rem. Elemen besar seperti foto
+ * 4:5 membuat jarak jauh terasa lambat, bukan dramatis.
+ */
+.js-reveal [data-reveal='left'],
+.js-reveal [data-reveal-item='left'] {
+    transform: translate3d(calc(var(--reveal-jarak-x) * -1), 0, 0);
+}
+
+.js-reveal [data-reveal='right'],
+.js-reveal [data-reveal-item='right'] {
+    transform: translate3d(var(--reveal-jarak-x), 0, 0);
+}
+
+.js-reveal [data-reveal='up'],
+.js-reveal [data-reveal-item='up'] {
+    transform: translate3d(0, var(--reveal-jarak-y), 0);
+}
+
+/*
+ * Arah `down` berarti datang DARI ATAS, jadi nilai translate-nya negatif:
+ * mulai di atas, bergerak ke bawah, berhenti di 0.
+ *
+ * Perhatikan ini kebalikan dari `--reveal-jarak-y` yang positif. Jangan tertukar
+ * tanpa sengaja: `up` (dari bawah) dan `down` (dari atas) kelihatan mirip di
+ * kode, tapi menghasilkan gerak yang berlawanan arah.
+ */
+.js-reveal [data-reveal='down'],
+.js-reveal [data-reveal-item='down'] {
+    transform: translate3d(0, calc(var(--reveal-jarak-y) * -1), 0);
+}
+
+/*
+ * Selector `is-revealed` di sini sengaja punya bobot lebih tinggi dari
+ * aturan arah di atasnya (4 selektor vs 3), sehingga ia menang tanpa
+ bergantung urutan penulisan.
+ */
+.js-reveal [data-reveal].is-revealed,
+.js-reveal [data-reveal-group].is-revealed [data-reveal-item] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .hero-muncul {
+        animation: none;
+    }
+
+    .hero-teks {
+        opacity: 1;
+        transform: none;
+    }
+
+    .menu-program > .menu-program__panel,
+    .kartu-guru__popup {
+        transition: none;
+    }
+
+    /*
+     * Reveal dimatikan total: tidak ada transform, tidak ada jeda.
+     * `data-reveal-item` ikut daftar karena isinya tetap harus terlihat
+     * walau grupnya tidak pernah tersalakan.
+     */
+    [data-reveal],
+    [data-reveal-item],
+    .js-reveal [data-reveal],
+    .js-reveal [data-reveal-item] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+        transition-delay: 0ms;
+    }
+}
