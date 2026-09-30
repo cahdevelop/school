@@ -1,13 +1,15 @@
 {{--
     Ikon garis (outline) 24x24, digambar inline sebagai SVG.
 
-    Kenapa inline, bukan icon font atau paket ikon: hanya 8 ikon yang
+    Kenapa inline, bukan icon font atau paket ikon: hanya 9 ikon yang
     tidak pernah berubah, dan menambah dependensi hanya untuk itu tidak
     sepadan. Inline SVG juga ikut mewarisi `currentColor` dan `stroke-width`,
     jadi satu kelas Tailwind mengatur warna dan ketebalan semua ikon sekaligus.
 
-    Kunci ikon datang dari config('keunggulan'). Kunci yang tidak dikenal
-    memakai ikon cadangan, bukan membuat halaman kosong.
+    Kunci ikon datang dari config('keunggulan') dan config('kegiatan'). Kunci
+    yang tidak dikenal memakai ikon cadangan, bukan membuat halaman kosong.
+    `buku` sengaja TIDAK punya @case: ia adalah cabang @default itu sendiri,
+    supaya kunci yang belum dikenal pun tetap dapat tampil.
 --}}
 @props([
     'nama' => 'buku',
@@ -48,6 +50,19 @@
 
         @case('bendera')
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
+            @break
+
+        {{--
+            Ikon putar. Berbeda dari ikon garis di atasnya: segitiga ini pekat
+            dan memakai `fill`, bukan `stroke`. Bentuknya tetap satu gaya
+            dengan ikon lain, dan dipakai sebagai tombol putar, bukan dekorasi
+            kartu.
+
+            `fill` pada path menimpa `fill="none"` milik <svg>, dan stroke
+            berwarna sama dipakai hanya untuk membulatkan sudutnya.
+        --}}
+        @case('putar')
+            <path d="M8.5 5.25v13.5L20 12 8.5 5.25Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
             @break
 
         @default

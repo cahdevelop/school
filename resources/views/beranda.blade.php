@@ -43,7 +43,10 @@
     {{-- 2. Mengapa Sekolah Menjadi Pilihan? --}}
     <x-mengapa-sekolah />
 
-    {{-- 3. Berita Sekolah --}}
+    {{-- 3. Kegiatan & Karya Peserta Didik --}}
+    <x-kegiatan-karya />
+
+    {{-- 4. Berita Sekolah --}}
     <section class="mx-auto max-w-6xl px-4 py-16 sm:py-20" aria-labelledby="berita-judul">
         <div data-reveal="up"
              class="flex flex-wrap items-end justify-between gap-x-6 gap-y-4 border-b border-slate-200 pb-6">
